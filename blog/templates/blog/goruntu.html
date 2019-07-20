@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ blog_gonderisi.baslik }}</title>
+    <style>
+        .baslik {
+            font-family: sans-serif;
+        }
+
+        .icerik {
+            font-family: monospace;
+        }
+
+        .yorum {
+            border: black solid 1px;
+            border-radius: 15px;
+            margin: 5px;
+            padding: 5px;
+        }
+
+        hr {
+            color: red;
+        }
+
+        .progress-ring {
+
+        }
+
+        .progress-ring__circle {
+            transition: 0.35s stroke-dashoffset;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+    </style>
+</head>
+<body>
+<h1 class="baslik">{{ blog_gonderisi.baslik }}</h1>
+<p class="icerik">{{ blog_gonderisi.icerik }}</p>
+<hr>
+{% for yorum in yorumlar %}
+    <div class="yorum">
+        <p>{{ yorum.icerik }}</p>
+        <small>- {{ yorum.olusturulma }}</small>
+    </div>
+{% endfor %}
+<hr>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.errors }}
+    <label> Yorum:
+        {{ form.icerik }}
+    </label>
+    <button type="submit">
+        Kaydet
+        <svg
+                class="progress-ring"
+                width="15"
+                height="15">
+            <circle
+                    class="progress-ring__circle"
+                    style="stroke:green"
+                    stroke-width="2"
+                    fill="transparent"
+                    r="6"
+                    cx="7"
+                    cy="8"></circle>
+        </svg>
+    </button>
+    {#    <span id="sayi"></span>#}
+</form>
+<noscript>Javascript bu sitenin çalışması için elzem değildir.</noscript>
+</body>
+<script>
+    const textarea = document.querySelector("#id_icerik");
+
+    var circle = document.querySelector('circle');
+    var radius = circle.r.baseVal.value;
+    var circumference = radius * 2 * Math.PI;
+
+    circle.style.strokeDasharray = `${circumference} ${circumference}`;
+    circle.style.strokeDashoffset = `${circumference}`;
+
+    function setProgress(percent) {
+        circle.style.strokeDashoffset = circumference - percent / 100 * circumference;
+    }
+
+    const input = document.querySelector('input');
+    setProgress(100);
+
+
+    function guncelle() {
+        let max = parseInt(textarea.maxLength);
+        let icerik = textarea.value.length;
+        {#let sayielem = document.querySelector("#sayi");#}
+        let deger = max - icerik;
+        {#sayielem.innerHTML = deger.toString();#}
+        let kalan = (100 * icerik / max);
+        if (kalan > 100){
+            kalan = 100
+        }
+        let progress = 100 - kalan;
+        if (progress < 15) {
+            circle.style.stroke = 'red';
+        } else if (progress < 25){
+            circle.style.stroke = 'orange';
+        } else {
+            circle.style.stroke = 'green';
+        }
+        setProgress(progress);
+    }
+
+    textarea.addEventListener("keyup", guncelle);
+    textarea.addEventListener("change", guncelle);
+    guncelle()
+</script>
+</html>

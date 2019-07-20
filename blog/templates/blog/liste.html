@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Blog Girdileri Listesi</title></head>
+<body>
+
+<h1>Blog Girdileri Listesi</h1>
+
+{% for gonderi in blog_gonderileri %}
+    <hr>
+    <p><a href="/blog/gonderi/{{ gonderi.id }}">{{ gonderi.baslik }}</a></p>
+    <p>{{ gonderi.icerik|truncatewords:10 }}</p>
+{% endfor %}
+</body>
+</html>
